@@ -27,7 +27,7 @@ ml_bio_golub/
 Requirements: [uv](https://docs.astral.sh/uv/) (it installs Python ≥ 3.11 automatically if needed).
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:Cxrbo/golub_implem.git
 cd ml_bio_golub
 
 uv sync
