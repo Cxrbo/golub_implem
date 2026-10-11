@@ -2,6 +2,15 @@
 
 Reimplementation of the **Golub** algorithm (*weighted voting*, Golub et al., 1999) and comparison with a **logistic regression**, applied to the **Wisconsin Diagnostic Breast Cancer (WDBC)** dataset: classification of breast masses as *malignant* / *benign* from cell nuclei features.
 
+## Tools
+
+![uv](https://img.shields.io/badge/uv-DE5FE9?style=for-the-badge&logo=uv&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge&logo=matplotlib&logoColor=white)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+
 ## Project structure
 
 ```
@@ -24,7 +33,7 @@ ml_bio_golub/
 
 ## Installation
 
-Requirements: [uv](https://docs.astral.sh/uv/) (it installs Python ≥ 3.11 automatically if needed).
+Requirements: uv (it installs Python ≥ 3.11 automatically if needed).
 
 ```bash
 git clone git@github.com:Cxrbo/golub_implem.git
