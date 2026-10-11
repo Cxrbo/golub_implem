@@ -1,0 +1,22 @@
+[project]
+name = "ml-bio-golub"
+version = "0.1.0"
+description = "Reconstruction of golub algorithm with a comparasion between weghted voting and Logistic Regression"
+readme = "README.md"
+authors = [
+    { name = "Evrard", email = "arthaud.evrard@epita.fr" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "scikit-learn>=1.4",
+]
+
+[project.scripts]
+ml-bio-golub = "ml_bio_golub.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
