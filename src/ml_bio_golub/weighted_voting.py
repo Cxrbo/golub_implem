@@ -79,6 +79,6 @@ class weighted_voting_model:
         to_test = test_df["diagnosis"].to_numpy()
         
         to_test_num = np.where(to_test == "malignant", 1, 0)
-        return classification_report(to_test, pred), balanced_accuracy_score(to_test, pred), roc_auc_score(to_test_num, scores), confusion_matrix(to_test, pred, labels=["malignant", "benign"])
+        return classification_report(to_test, pred), balanced_accuracy_score(to_test, pred), (to_test_num, scores), confusion_matrix(to_test, pred, labels=["malignant", "benign"])
     
     

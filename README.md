@@ -27,7 +27,6 @@ ml_bio_golub/
 │   ├── evalution_of_model.py      # Weighted voting evaluation (cross-validation)
 │   └── logistic_regression.py     # Logistic regression evaluation
 ├── pyproject.toml
-├── uv.lock
 └── .python-version                # Python 3.11
 ```
 

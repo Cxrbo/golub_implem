@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay, roc_auc_score
 from itertools import combinations
 
 from ml_bio_golub import weighted_voting
@@ -12,13 +12,16 @@ def test_model_performance(seed: int, df: pd.DataFrame, n_splits, n_repeats):
     """
     Compute the avg metrics for the 5 * 3 tests of the model using RepeatedStratifiedKFold
     """
+    # Save the results of each folds in log file
+    if not os.path.exists("results/weighted_voting"):
+            os.mkdir("results/weighted_voting")
+    
     # Use of RepeatedStratifiedKFold from sklearn with 5 folds repeated 3 times
     rskf = RepeatedStratifiedKFold(
             n_splits=n_splits,
             n_repeats=n_repeats,
             random_state=seed
         )
-    
     
     reports = []
     features_set = []
@@ -28,7 +31,7 @@ def test_model_performance(seed: int, df: pd.DataFrame, n_splits, n_repeats):
     mean_matrix = np.zeros((2, 2))
     
     # Iterate over the different fold
-    for _, (train_idx, test_idx) in enumerate(rskf.split(df, df["diagnosis"])):
+    for i, (train_idx, test_idx) in enumerate(rskf.split(df, df["diagnosis"])):
         # Build dataframe for training and testing
         df_train = df.iloc[train_idx]
         df_test = df.iloc[test_idx]
@@ -38,7 +41,8 @@ def test_model_performance(seed: int, df: pd.DataFrame, n_splits, n_repeats):
         model.train(df_train)
 
         # Evaluate the model
-        report, accu, auc, matrix = model.evaluate(df_test)
+        report, accu, (test, scores), matrix = model.evaluate(df_test)
+        auc = roc_auc_score(test, scores)
         
         # Save the feature as set
         features_set.append(set(model.features.keys()))
@@ -54,16 +58,27 @@ def test_model_performance(seed: int, df: pd.DataFrame, n_splits, n_repeats):
         
         # Add the report
         reports.append(report)
-
+        
+        if i == 0:
+            # Save the results of each folds in log file
+            if not os.path.exists("results/weighted_voting/f1"):
+                    os.mkdir("results/weighted_voting/f1")
+            
+            # Save the confusion matrix for the first fold
+            mat = ConfusionMatrixDisplay(confusion_matrix=np.array(matrix), display_labels=["malignant", "benign"])
+            mat.plot()
+            plt.savefig("results/weighted_voting/f1/confusion_matrix.png")
+            plt.close()
+            
+            # Save the auc curve
+            RocCurveDisplay.from_predictions(test, scores)
+            plt.title("AUC curve for weighted voting (from prediction)")
+            plt.savefig("results/weighted_voting/f1/auc.png")
+            
     # Compute the mean
     mean_accu /= (n_repeats * n_splits)
     mean_auc /= (n_repeats * n_splits)
     mean_matrix /= (n_repeats * n_splits)
-
-
-    # Save the results of each folds in log file
-    if not os.path.exists("results/weighted_voting"):
-            os.mkdir("results/weighted_voting")
     
     # Compute the mean jaccard score
     jaccard_scores = [

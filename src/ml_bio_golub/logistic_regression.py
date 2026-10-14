@@ -4,13 +4,17 @@ import matplotlib.pyplot as plt
 import os
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, balanced_accuracy_score, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import classification_report, balanced_accuracy_score, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay, RocCurveDisplay
 from sklearn import preprocessing
 
 def test_model_performance_regression(seed: int, df: pd.DataFrame, n_splits, n_repeats):
     """
     Compute the avg metrics for the 5 * 3 tests of the model using RepeatedStratifiedKFold
     """
+    # Save the results of each folds in log file
+    if not os.path.exists("results/logistic_regression"):
+            os.mkdir("results/logistic_regression")
+    
     # Use of RepeatedStratifiedKFold from sklearn with 5 folds repeated 3 times
     rskf = RepeatedStratifiedKFold(
             n_splits=n_splits,
@@ -27,7 +31,7 @@ def test_model_performance_regression(seed: int, df: pd.DataFrame, n_splits, n_r
     mean_matrix = np.zeros((2, 2))
     
     # Iterate over the different fold
-    for _, (train_idx, test_idx) in enumerate(rskf.split(df, df["diagnosis"])):
+    for i, (train_idx, test_idx) in enumerate(rskf.split(df, df["diagnosis"])):
         # Initalize the scaler to normalize data
         scaler = preprocessing.StandardScaler()
         
@@ -56,20 +60,33 @@ def test_model_performance_regression(seed: int, df: pd.DataFrame, n_splits, n_r
         # Compute the different score
         mean_accu += balanced_accuracy_score(Y_test, pred)
         mean_auc += roc_auc_score(Y_test_num, scores)
-        mean_matrix += confusion_matrix(Y_test, pred, labels=["malignant", "benign"])
+        matrix = confusion_matrix(Y_test, pred, labels=["malignant", "benign"])
+        mean_matrix += matrix
         
         # Append the report
         reports.append(classification_report(Y_test, pred))
+        
+        if i == 0:
+            # Save the results of each folds in log file
+            if not os.path.exists("results/logistic_regression/f1"):
+                    os.mkdir("results/logistic_regression/f1")
+            
+            # Save the confusion matrix for the first fold
+            mat = ConfusionMatrixDisplay(confusion_matrix=np.array(matrix), display_labels=["malignant", "benign"])
+            mat.plot()
+            plt.savefig("results/logistic_regression/f1/confusion_matrix.png")
+            plt.close()
+            
+            # Save the auc curve
+            RocCurveDisplay.from_predictions(Y_test_num, scores)
+            plt.title("AUC curve for logistic regression (from prediction)")
+            plt.savefig("results/logistic_regression/f1/auc.png")
 
     
     # Compute the mean
     mean_accu /= (n_repeats * n_splits)
     mean_auc /= (n_repeats * n_splits)
     mean_matrix /= (n_repeats * n_splits)
-    
-    # Save the results of each folds in log file
-    if not os.path.exists("results/logistic_regression"):
-            os.mkdir("results/logistic_regression")
     
     with open('results/logistic_regression/reports_logistic_regression.txt', 'w') as f:
         i = 1
