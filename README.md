@@ -59,11 +59,17 @@ results/
 ├── data/
 │   ├── malignant_vs_benign.png
 │   └── reports_data.txt
-├── weighted_voting/
+├── weighted_voting
+│   ├── f1/                            # selection for the first fold rep 1
+│   │   ├── confusion_matrix.png
+│   │   └── auc.png
 │   ├── reports_weighted_voting.txt    # per-fold reports + averages
 │   ├── avg_confusion_matrix.png
 │   └── feature_frequency.png          # selection frequency of each feature
 └── logistic_regression/
+    ├── f1/                            # selection for the first fold rep 1
+    │   ├── confusion_matrix.png
+    │   └── auc.png
     ├── reports_logistic_regression.txt
     └── avg_confusion_matrix.png
 ```
